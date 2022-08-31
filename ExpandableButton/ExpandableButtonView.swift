@@ -100,12 +100,12 @@ public class ExpandableButtonView: UIView {
     
     // MARK: - Init
     
-    public init(frame: CGRect = .zero, direction: Direction = .right, items: [ExpandableButtonItem]) {
+    public init(frame: CGRect = .zero, direction: Direction = .right, items: [ExpandableButtonItem], color: UIColor = .systemBlue) {
         
         self.direction = direction
         super.init(frame: frame)
         setupUI()
-        setupButtons(with: items)
+        setupButtons(with: items, color: color)
     }
     
     required public init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -212,7 +212,7 @@ public class ExpandableButtonView: UIView {
         insertSubview(separatorView, belowSubview: arrowButton)
     }
     
-    private func setupButtons(with items: [ExpandableButtonItem]) {
+    private func setupButtons(with items: [ExpandableButtonItem], color: UIColor) {
         
         items.forEach { item in
             
@@ -232,7 +232,7 @@ public class ExpandableButtonView: UIView {
             button.titleLabel?.textAlignment = item.titleAlignment
             button.imageView?.contentMode = item.imageContentMode
             
-            button.backgroundColor = item.isSelected ? UIColor(named: "primary_color") : .clear
+            button.backgroundColor = item.isSelected ? color : .clear
             button.layer.cornerRadius = 4
             
             if let size = item.size { button.frame = CGRect(origin: .zero, size: size) }

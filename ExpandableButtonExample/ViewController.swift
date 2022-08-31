@@ -28,7 +28,7 @@ class ViewController: UIViewController {
             buttonView = nil
         }
         let items = generateItems()
-        buttonView = ExpandableButtonView(direction: .up, items: items)
+        buttonView = ExpandableButtonView(direction: .up, items: items,color: UIColor(named: "primary_color")!)
         buttonView.openImage = nil
         buttonView.closeImage = nil
         buttonView.separatorColor = .clear
