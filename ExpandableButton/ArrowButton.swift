@@ -54,6 +54,13 @@ public class ArrowButton: ActionButton {
         }
     }
     
+    public var arrowTitle = "" {
+        didSet {
+            setTitle(arrowTitle, for: .normal)
+            titleLabel?.font = .systemFont(ofSize: 13)
+        }
+    }
+    
     // MARK: - Private properties
     
     private lazy var topLineLayer: CAShapeLayer = layer()

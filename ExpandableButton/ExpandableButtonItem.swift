@@ -58,11 +58,14 @@ public class ExpandableButtonItem {
     // identifier
     public var identifier: String = ""
     
+    public var isSelected: Bool = false
+    
     // MARK: - Init
     
     public init(image: UIImage? = nil,
                 highlightedImage: UIImage? = nil,
                 attributedTitle: NSAttributedString? = nil,
+                isSelected: Bool = false,
                 highlightedAttributedTitle: NSAttributedString? = nil,
                 contentEdgeInsets: UIEdgeInsets = .zero,
                 titleEdgeInsets: UIEdgeInsets = .zero,
@@ -85,5 +88,6 @@ public class ExpandableButtonItem {
         self.imageContentMode = imageContentMode
         self.identifier = identifier
         self.action = action
+        self.isSelected = isSelected
     }
 }

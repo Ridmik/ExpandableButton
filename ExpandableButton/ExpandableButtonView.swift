@@ -75,6 +75,11 @@ public class ExpandableButtonView: UIView {
         set { arrowButton.arrowColor = newValue }
     }
     
+    public var arrowTitle: String {
+        get { return arrowButton.arrowTitle }
+        set { arrowButton.arrowTitle = newValue }
+    }
+    
     public var closeOpenImagesInsets: UIEdgeInsets {
         get { return arrowButton.imageEdgeInsets }
         set { arrowButton.imageEdgeInsets = newValue }
@@ -108,7 +113,13 @@ public class ExpandableButtonView: UIView {
     // MARK: - Overrides
 
     public override var frame: CGRect { didSet { setupFrames() } }
-    public override var backgroundColor: UIColor? { didSet { arrowButton.backgroundColor = backgroundColor } }
+    public var backColor: UIColor? {
+        didSet {
+            arrowButton.backgroundColor = .clear // backgroundColor
+            
+        }
+        
+    }
     
     override public func layoutSubviews() {
         
@@ -128,7 +139,7 @@ public class ExpandableButtonView: UIView {
     public func open() {
         
         guard state == .closed else { return }
-    
+        backgroundColor = backColor
         state = .animating
         showOpenArrow()
         
@@ -148,7 +159,7 @@ public class ExpandableButtonView: UIView {
     public func close() {
 
         guard state == .opened else { return }
-        
+        backgroundColor = .clear
         state = .animating
         
         // because of CABasicAnimation in ArrowButton.
@@ -191,7 +202,7 @@ public class ExpandableButtonView: UIView {
             case .animating: break
             }
         }
-        arrowButton.backgroundColor = backgroundColor
+//        arrowButton.backgroundColor = backgroundColor
         addSubview(arrowButton)
         
         // separator
@@ -221,6 +232,9 @@ public class ExpandableButtonView: UIView {
             button.titleLabel?.textAlignment = item.titleAlignment
             button.imageView?.contentMode = item.imageContentMode
             
+            button.backgroundColor = item.isSelected ? UIColor(named: "primary_color") : .clear
+            button.layer.cornerRadius = 4
+            
             if let size = item.size { button.frame = CGRect(origin: .zero, size: size) }
             
             button.actionBlock = { [weak self] in
@@ -240,7 +254,7 @@ public class ExpandableButtonView: UIView {
         
         // arrow button
         
-        arrowButton.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+        arrowButton.frame = CGRect(x: 0, y: 0, width: frame.width, height: 0 ) // frame.height)
         
         // separator
         
@@ -255,8 +269,10 @@ public class ExpandableButtonView: UIView {
         
         switch state {
         case .closed:
+            backgroundColor = .clear
             showCloseArrow()
         case .opened:
+            backgroundColor = backColor
             open(with: direction)
             showOpenArrow()
         default: break
@@ -289,17 +305,17 @@ public class ExpandableButtonView: UIView {
         
         itemsButtons.forEach {
             
-            let width = $0.frame.width == 0 ? arrowButton.frame.width : $0.frame.width
-            let height = $0.frame.height == 0 ? arrowButton.frame.height : $0.frame.height
+            let width = $0.frame.width == 0 ? arrowButton.frame.width - 8 : $0.frame.width
+            let height = $0.frame.height == 0 ? 40 : $0.frame.height
             
-            var x: CGFloat = 0
+            var x: CGFloat = 4
             var y: CGFloat = 0
             
             switch direction {
             case .up:
                 y = previousButton != nil ?
                     previousButton!.frame.origin.y + previousButton!.frame.height :
-                    arrowButton.frame.origin.y
+                    arrowButton.frame.origin.y + 4
             case .down:
                 y = previousButton != nil ?
                     previousButton!.frame.origin.y + previousButton!.frame.height :
@@ -325,35 +341,12 @@ public class ExpandableButtonView: UIView {
         
         arrowButton.setImage(openImage, for: .normal)
         arrowButton.isArrowsHidden = openImage != nil
-        
-        if openImage == nil {
-            
-            if closeImage == nil {
-                
-                switch direction {
-                case .up:       arrowButton.showDownArrow()
-                case .down:     arrowButton.showUpArrow()
-                case .left:     arrowButton.showRightArrow()
-                case .right:    arrowButton.showLeftArrow()
-                }
-            }
-        }
     }
     
     private func showCloseArrow() {
         
         arrowButton.setImage(closeImage, for: .normal)
         arrowButton.isArrowsHidden = closeImage != nil
-        
-        if closeImage == nil {
-            
-            switch direction {
-            case .up:       arrowButton.showUpArrow()
-            case .down:     arrowButton.showDownArrow()
-            case .left:     arrowButton.showLeftArrow()
-            case .right:    arrowButton.showRightArrow()
-            }
-        }
     }
     
     // MARK: - Haptic Feedback
@@ -375,12 +368,10 @@ public class ExpandableButtonView: UIView {
         case .up:
             let itemsHeight = itemsButtons.reduce(0, { $0 + $1.frame.height })
             let y = frame.origin.y - itemsHeight
-            let height = frame.size.height + itemsHeight
-            
-            super.frame = CGRect(x: frame.origin.x, y: y, width: frame.size.width, height: height)
-            
+            let height =  itemsHeight
+            super.frame = CGRect(x: frame.origin.x, y: y, width: frame.size.width, height: height + 8)
             let arrY = super.frame.height - arrowButton.frame.height
-            arrowButton.frame = CGRect(x: 0, y: arrY, width: arrowButton.frame.width, height: arrowButton.frame.height)
+            arrowButton.frame = CGRect(x: 0, y: arrY, width: arrowButton.frame.width, height: 0)
         case .down:
             let height = frame.size.height + itemsButtons.reduce(0, { $0 + $1.frame.height })
             super.frame = CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.size.width, height: height)
